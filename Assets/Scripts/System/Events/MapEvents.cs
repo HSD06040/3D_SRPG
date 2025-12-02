@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Events.MapEvent
+namespace Events
 {
     public record struct TileHighlightRequestedEvent(List<Tile> TilesToHighlight) : IEvent;
 

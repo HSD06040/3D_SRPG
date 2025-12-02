@@ -1,6 +1,6 @@
 using SRPG.Command;
 
-namespace Events.UnitEvent
+namespace Events
 {
     public record struct UnitEvent(BaseUnit Unit) : IEvent;
 
