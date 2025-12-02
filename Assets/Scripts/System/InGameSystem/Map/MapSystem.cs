@@ -1,5 +1,4 @@
-﻿using AYellowpaper.SerializedCollections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,8 +12,7 @@ public class MapSystem : IDisposable
     readonly EventBinding<UnitSelectEvent> selectBinding;
     #endregion
 
-    [SerializedDictionary("좌표", "타일")]
-    readonly SerializedDictionary<Vector2Int, Tile> tileMap = new();
+    readonly Dictionary<Vector2Int, Tile> tileMap = new();
 
     public MapSystem()
     {

@@ -1,5 +1,5 @@
-using AYellowpaper.SerializedCollections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameSystemManager : MonoBehaviour
 {
@@ -10,8 +10,7 @@ public class GameSystemManager : MonoBehaviour
     private GameUndoSystem undoSystem;
     #endregion
 
-    [SerializedDictionary("ÁÂÇ¥", "À¯´Ö")]
-    private SerializedDictionary<Vector2Int, BaseUnit> unitMap;
+    private Dictionary<Vector2Int, BaseUnit> unitMap;
 
     private void Awake()
     {

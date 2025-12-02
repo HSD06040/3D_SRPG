@@ -1,4 +1,4 @@
-namespace Events.GameSystem
+namespace Events
 {
     
 }

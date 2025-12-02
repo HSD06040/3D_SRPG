@@ -1,4 +1,3 @@
-using HSD.DI;
 using UnityEngine;
 
 public interface IUnitFactory
@@ -19,7 +18,6 @@ public class UnitFactory : MonoBehaviour, IUnitFactory
     }
     #endregion
 
-    [Inject]
     void Init(GameSystemManager gameSystemManager)
     {
         this.gameSystemManager = gameSystemManager;
