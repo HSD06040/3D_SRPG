@@ -1,34 +1,40 @@
 ﻿using SRPG.Command;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
+/// <summary>
+/// 게임 내 주요 시스템을 관리하는 클래스
+/// </summary>
 public class GameSystem : IDisposable
 {
-    private readonly MapSystem mapSystem;
+    readonly UnitMovementCache unitCache;
     public BaseUnit SelectedUnit { get; private set; }
     public Tile SelectedTile { get; private set; }
 
+    readonly Stack<ICommand> commands;
+
     readonly EventBinding<TileSelectEvent> tileSelectBinding;
     readonly EventBinding<UnitSelectEvent> unitSelectBinding;
+    readonly EventBinding<UnitTurnEndedEvent> unitTurnEndedBinding;
+    readonly EventBinding<UnitTurnResetEvent> unitTurnResetEvent;
 
-    public GameSystem(MapSystem mapSystem)
+    public GameSystem(UnitMovementCache unitCache)
     {
-        this.mapSystem = mapSystem;
+        this.unitCache = unitCache;
 
-        tileSelectBinding = new EventBinding<TileSelectEvent>();
-        unitSelectBinding = new EventBinding<UnitSelectEvent>();
+        commands = new Stack<ICommand>();
 
-        EventBinding();
-    }
-
-    private void EventBinding()
-    {
-        tileSelectBinding.Add(OnTileSelected);
+        tileSelectBinding = new EventBinding<TileSelectEvent>(OnTileSelected);
         EventBus<TileSelectEvent>.Register(tileSelectBinding);
 
-        unitSelectBinding.Add(OnUnitSelected);
+        unitSelectBinding = new EventBinding<UnitSelectEvent>(OnUnitSelected);
         EventBus<UnitSelectEvent>.Register(unitSelectBinding);
+
+        unitTurnResetEvent = new EventBinding<UnitTurnResetEvent>(OnUnitTurnReset);
+        EventBus<UnitTurnResetEvent>.Register(unitTurnResetEvent);
+
+        unitTurnEndedBinding = new EventBinding<UnitTurnEndedEvent>(TurnEnd);
+        EventBus<UnitTurnEndedEvent>.Register(unitTurnEndedBinding);
     }
 
     private void OnTileSelected(TileSelectEvent evt)
@@ -37,13 +43,14 @@ public class GameSystem : IDisposable
 
         if (SelectedUnit == null) return;
 
-        List<Tile> moveableTiles = mapSystem.GetMoveableTiles(SelectedUnit);
+        List<Tile> moveableTiles = unitCache.GetMoveableTiles(SelectedUnit);
         if (!moveableTiles.Contains(evt.Tile)) return;
 
         MoveUnitCommand moveCommand = new MoveUnitCommand(SelectedUnit, evt.Tile);
         moveCommand.Execute();
+        commands.Push(moveCommand);
 
-        EventBus<UnitMoveCommittedEvent>.Raise(new UnitMoveCommittedEvent(moveCommand));
+        EventBus<UnitMoveEvent>.Raise(new UnitMoveEvent(SelectedUnit, evt.Tile));
     }
 
     private void OnUnitSelected(UnitSelectEvent evt)
@@ -51,16 +58,35 @@ public class GameSystem : IDisposable
         SelectedUnit = evt.Unit;
     }
 
-    private bool IsValidMove(BaseUnit unit, Tile tile)
+    private void TurnEnd(UnitTurnEndedEvent turnEndedEvents)
     {
-        List<Tile> moveableTiles = mapSystem.CalculateMoveableTiles(unit);
+        for (int i = 0; i < commands.Count; i++)
+        {
+            if (commands.TryPop(out ICommand command))
+            {
+                EventBus<UnitCommandCommittedEvent>.Raise(new UnitCommandCommittedEvent { Command = command });
+            }
+        }
 
-        return moveableTiles.Contains(tile);
+        commands.Clear();
+    }
+
+    private void OnUnitTurnReset(UnitTurnResetEvent evt)
+    {
+        for (int i = 0; i < commands.Count; i++)
+        {
+            if (commands.TryPop(out ICommand command))
+            {
+                command.Undo();
+            }
+        }
     }
 
     public void Dispose()
     {
         EventBus<TileSelectEvent>.Deregister(tileSelectBinding);
         EventBus<UnitSelectEvent>.Deregister(unitSelectBinding);
+        EventBus<UnitTurnEndedEvent>.Deregister(unitTurnEndedBinding);
+        EventBus<UnitTurnResetEvent>.Deregister(unitTurnResetEvent);
     }
 }

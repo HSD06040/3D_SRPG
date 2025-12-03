@@ -2,29 +2,25 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// 게임 내에서 실행된 커맨드를 저장하고, 실행 취소(Undo) 기능을 제공하는 시스템
+/// </summary>
 public class GameUndoSystem : IDisposable
 {
     readonly Stack<ICommand> commandStack = new Stack<ICommand>();
 
-    readonly EventBinding<UnitMoveCommittedEvent> commitBinding;
-
-    MoveUnitCommand moveUnitCommand;
+    readonly EventBinding<UnitCommandCommittedEvent> commitBinding;
 
     public GameUndoSystem()
     {
-        commitBinding = new EventBinding<UnitMoveCommittedEvent>();
+        commitBinding = new EventBinding<UnitCommandCommittedEvent>();
         commitBinding.Add(OnMoveCommitted);
-        EventBus<UnitMoveCommittedEvent>.Register(commitBinding);
+        EventBus<UnitCommandCommittedEvent>.Register(commitBinding);
     }
 
-    private void OnMoveCommitted(UnitMoveCommittedEvent evt)
+    private void OnMoveCommitted(UnitCommandCommittedEvent evt)
     {
-        moveUnitCommand = evt.MoveCommand;
-    }
-
-    private void PushAll()
-    {
-        Push(moveUnitCommand);
+        Push(evt.Command);
     }
 
     private void Push(ICommand command)
@@ -54,6 +50,6 @@ public class GameUndoSystem : IDisposable
 
     public void Dispose()
     {
-        EventBus<UnitMoveCommittedEvent>.Deregister(commitBinding);
+        EventBus<UnitCommandCommittedEvent>.Deregister(commitBinding);
     }
 }

@@ -1,14 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// 이벤트를 받으면 이벤트에 맞는 타일 하이라이팅, 하이라이트 클리어, 
+/// </summary>
 public class MapVisualSystem : IDisposable
 {
-    private readonly List<Tile> hightlightTiles = new();
+    private readonly List<Tile> hightlightTiles;
 
-    #region Events
     private readonly EventBinding<TileHighlightRequestedEvent> highlightBinding;
     private readonly EventBinding<TileHighlightClearEvent> clearBinding;
-    private readonly EventBinding<UnitMoveCommittedEvent> commitBinding;
+    private readonly EventBinding<UnitTurnEndedEvent> unitTurnEndedBinding;
+
+    public MapVisualSystem()
+    {
+        highlightBinding = new EventBinding<TileHighlightRequestedEvent>();
+        clearBinding = new EventBinding<TileHighlightClearEvent>();
+        unitTurnEndedBinding = new EventBinding<UnitTurnEndedEvent>();
+        hightlightTiles = new List<Tile>(50);
+
+        EventBinding();
+    }
 
     private void EventBinding()
     {
@@ -18,18 +30,8 @@ public class MapVisualSystem : IDisposable
         clearBinding.Add(ClearVisuals);
         EventBus<TileHighlightClearEvent>.Register(clearBinding);
 
-        commitBinding.Add(ClearVisuals);
-        EventBus<UnitMoveCommittedEvent>.Register(commitBinding);
-    }
-    #endregion
-
-    public MapVisualSystem()
-    {
-        highlightBinding = new EventBinding<TileHighlightRequestedEvent>();
-        clearBinding = new EventBinding<TileHighlightClearEvent>();
-        commitBinding = new EventBinding<UnitMoveCommittedEvent>();
-
-        EventBinding();
+        unitTurnEndedBinding.Add(ClearVisuals);
+        EventBus<UnitTurnEndedEvent>.Register(unitTurnEndedBinding);
     }
 
     public void OnHighlightRequest(TileHighlightRequestedEvent evt)
@@ -56,6 +58,6 @@ public class MapVisualSystem : IDisposable
     {
         EventBus<TileHighlightRequestedEvent>.Deregister(highlightBinding);
         EventBus<TileHighlightClearEvent>.Deregister(clearBinding);
-        EventBus<UnitMoveCommittedEvent>.Deregister(commitBinding);
+        EventBus<UnitTurnEndedEvent>.Deregister(unitTurnEndedBinding);
     }
 }

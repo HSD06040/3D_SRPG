@@ -31,7 +31,7 @@
 
         if (SelectedUnit == null) return;
 
-        SelectedUnit.MoveVisual(selectEvent.Tile.Pos);
+        SelectedUnit.MoveTo(selectEvent.Tile.Pos);
     }
 
     void SelectUnit(UnitSelectEvent selectEvent) => SelectedUnit = selectEvent.Unit;
