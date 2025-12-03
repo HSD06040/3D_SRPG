@@ -7,8 +7,6 @@ public interface IUnitFactory
 
 public class UnitFactory : MonoBehaviour, IUnitFactory
 {
-    private GameSystemManager gameSystemManager;
-
     #region Test
     [SerializeField] GameObject prefab;
     [ContextMenu("Create")]
@@ -17,11 +15,6 @@ public class UnitFactory : MonoBehaviour, IUnitFactory
         Create(prefab, Vector3.zero);
     }
     #endregion
-
-    void Init(GameSystemManager gameSystemManager)
-    {
-        this.gameSystemManager = gameSystemManager;
-    }
 
     public void Create(GameObject unitPrefab, Vector3 pos)
     {

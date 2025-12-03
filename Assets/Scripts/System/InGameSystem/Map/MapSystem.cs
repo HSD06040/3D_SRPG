@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class MapSystem
 {
-    readonly Dictionary<Vector2Int, Tile> tileMap = new();
+    readonly Dictionary<Vector2Int, Tile> tileMap = new();    
 
     public bool TryGetTile(Vector2Int pos, out Tile tile)
     {

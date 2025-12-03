@@ -1,20 +1,11 @@
 ﻿using UnityEngine;
 
 public class MapGenerator
-{
-    readonly GameObject tilePrefab;
-    readonly MapSystem mapSystem;
-
-    public MapGenerator(string tilePrefabAddress, MapSystem mapSystem)
-    {
-        tilePrefab = Resources.Load<GameObject>(tilePrefabAddress);
-        this.mapSystem = mapSystem;
-    }
-
-    public void MapGenerate(MapData mapData)
+{            
+    public static void MapGenerate(MapData mapData, MapSystem mapSystem, GameObject tilePrefab)
     {
         Transform tileParent = new GameObject("MapTiles").transform;
-
+        
         for (int y = 1; y <= mapData.MapSize.x; y++)
         {
             for (int x = 1; x <= mapData.MapSize.y; x++)
@@ -27,7 +18,7 @@ public class MapGenerator
                 tile.Init(tilePos, null);
                 mapSystem.RegisterTile(tilePos, tile);
             }
-        }
+        }        
     }
 }
 
