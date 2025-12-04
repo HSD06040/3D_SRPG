@@ -20,8 +20,7 @@ public class GameInitialize : MonoBehaviour
         MapGenerator.MapGenerate(mapData, mapSystem, Resources.Load<GameObject>("Prefabs/Tile"));
 
         BaseUnit unit = Instantiate(unitPrefab).GetComponent<BaseUnit>();
-        unit.SetPosition(unitPos);
-        unit.Init(unitData);
+        unit.Init(unitData, unitPos);        
 
         if (mapSystem.TryGetTile(unitPos, out Tile tile))
             unit.transform.position = tile.transform.position;

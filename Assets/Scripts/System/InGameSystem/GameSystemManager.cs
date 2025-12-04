@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// 게임 내 주요 시스템을 관리하는 클래스
 /// </summary>
-public class GameSystem : IDisposable
+public class GameSystemManager : IDisposable
 {
     readonly UnitMovementCache unitCache;
     public BaseUnit SelectedUnit { get; private set; }
@@ -18,7 +18,7 @@ public class GameSystem : IDisposable
     readonly EventBinding<UnitTurnEndedEvent> unitTurnEndedBinding;
     readonly EventBinding<UnitTurnResetEvent> unitTurnResetEvent;
 
-    public GameSystem(UnitMovementCache unitCache)
+    public GameSystemManager(UnitMovementCache unitCache)
     {
         this.unitCache = unitCache;
 
@@ -56,6 +56,13 @@ public class GameSystem : IDisposable
     private void OnUnitSelected(UnitSelectEvent evt)
     {
         SelectedUnit = evt.Unit;
+
+        if (SelectedUnit == null) return;
+
+        EventBus<CameraSequenceEvent>.Raise(new CameraSequenceEvent(
+            new CameraSequence(new UnityEngine.Vector3(SelectedUnit.transform.position.x, 10, SelectedUnit.transform.position.z),
+            .3f)
+            ));
     }
 
     private void TurnEnd(UnitTurnEndedEvent turnEndedEvents)

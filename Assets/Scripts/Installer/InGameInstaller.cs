@@ -8,7 +8,7 @@ public class InGameInstaller : MonoInstaller
         Container.Bind<PathfindingService>().AsSingle();
         Container.Bind<UnitMovementCache>().AsSingle().NonLazy();
         Container.Bind<GameUndoSystem>().AsSingle().NonLazy();
-        Container.Bind<GameSystem>().AsSingle().NonLazy();
+        Container.Bind<GameSystemManager>().AsSingle().NonLazy();
         Container.Bind<TileVisualController>().AsSingle().NonLazy();
         Container.Bind<MapVisualSystem>().AsSingle().NonLazy();
     }

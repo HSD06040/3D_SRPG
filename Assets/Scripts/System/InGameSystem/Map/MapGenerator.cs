@@ -12,7 +12,7 @@ public class MapGenerator
             {
                 Vector2Int tilePos = new Vector2Int(y, x);
                 Tile tile = Object.Instantiate(tilePrefab,
-                    new Vector3(tilePos.x * mapData.Offset, 0, tilePos.y * mapData.Offset),
+                    new Vector3(tilePos.x * mapData.Offset, .3f, tilePos.y * mapData.Offset),
                     Quaternion.identity, tileParent).GetComponent<Tile>();               
 
                 tile.Init(tilePos, new TileData());

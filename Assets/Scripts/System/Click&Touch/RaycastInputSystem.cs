@@ -53,5 +53,6 @@ public class RaycastInputSystem : MonoBehaviour
     void Cancel()
     {
         EventBus<TileHighlightClearEvent>.Raise(new TileHighlightClearEvent());
+        EventBus<UnitSelectEvent>.Raise(new UnitSelectEvent(null));
     }
 }

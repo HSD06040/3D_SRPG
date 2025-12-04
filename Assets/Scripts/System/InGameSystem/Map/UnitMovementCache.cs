@@ -7,17 +7,21 @@ using UnityEngine;
 /// </summary>
 public class UnitMovementCache : IDisposable
 {
-    readonly PathfindingService _pathfindingService;
+    readonly PathfindingService pathfindingService;
     readonly Dictionary<BaseUnit, List<Tile>> moveableTileCache = new();
 
     readonly EventBinding<UnitTurnEndedEvent> commitBinding;
+    readonly EventBinding<UnitMoveEvent> moveBinding;
 
     public UnitMovementCache(PathfindingService pathfindingService)
     {
-        _pathfindingService = pathfindingService;
+        this.pathfindingService = pathfindingService;
 
         commitBinding = new EventBinding<UnitTurnEndedEvent>(OnUnitMoveCommitted);
         EventBus<UnitTurnEndedEvent>.Register(commitBinding);
+
+        moveBinding = new(OnUnitMove);
+        EventBus<UnitMoveEvent>.Register(moveBinding);
     }
 
     public List<Tile> GetMoveableTiles(BaseUnit unit)
@@ -29,7 +33,7 @@ public class UnitMovementCache : IDisposable
         }
 
         Debug.Log("Moveable Tiles Calculated");
-        List<Tile> calculatedTiles = _pathfindingService.CalculateMoveableTiles(unit);
+        List<Tile> calculatedTiles = pathfindingService.CalculateMoveableTiles(unit);
         moveableTileCache.Add(unit, calculatedTiles);
 
         return calculatedTiles;
@@ -39,7 +43,14 @@ public class UnitMovementCache : IDisposable
     {
         BaseUnit unit = evt.Unit;
 
-        moveableTileCache[unit] = _pathfindingService.CalculateMoveableTiles(unit);
+        moveableTileCache[unit] = pathfindingService.CalculateMoveableTiles(unit);
+    }
+    private void OnUnitMove(UnitMoveEvent evt)
+    {
+        BaseUnit unit = evt.Unit;
+        Tile toTile = evt.ToTile;
+
+        pathfindingService.OnUnitMove(unit, toTile, GetMoveableTiles(unit));
     }
 
     public void Dispose()
