@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 이벤트를 받으면 이벤트에 맞는 타일 하이라이팅, 하이라이트 클리어, 
@@ -37,6 +38,9 @@ public class MapVisualSystem : IDisposable
     public void OnHighlightRequest(TileHighlightRequestedEvent evt)
     {
         ClearVisuals();
+        Debug.Log("Highlight Requested");
+        Debug.Log(evt.TilesToHighlight.Count);
+
         foreach (Tile tile in evt.TilesToHighlight)
         {
             tile.HighlightTile();

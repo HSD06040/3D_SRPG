@@ -24,9 +24,8 @@ public class TileVisualController : IDisposable
 
     public void VisibleMoveableTiles(BaseUnit unit)
     {
-        EventBus<TileHighlightClearEvent>.Raise(new TileHighlightClearEvent());
-
-        EventBus<TileHighlightRequestedEvent>.Raise(new TileHighlightRequestedEvent(_moveCache.GetMoveableTiles(unit)));
+        var moveableTiles = _moveCache.GetMoveableTiles(unit);
+        EventBus<TileHighlightRequestedEvent>.Raise(new TileHighlightRequestedEvent(moveableTiles));
     }
 
     public void Dispose()

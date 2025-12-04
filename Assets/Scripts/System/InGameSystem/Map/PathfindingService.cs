@@ -46,7 +46,7 @@ public class PathfindingService
 
             foreach (Vector2Int neighborPos in neighbors)
             {
-                if (mapSystem.TryGetTile(unitPos, out Tile neighborTile))
+                if (mapSystem.TryGetTile(neighborPos, out Tile neighborTile))
                 {
                     if (visited.ContainsKey(neighborTile) || !CanMoveTo(neighborTile, unit))
                     {

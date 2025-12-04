@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 유닛의 이동 가능한 타일을 캐싱하는 서비스 / 턴 종료 마다 갱신
@@ -23,11 +24,14 @@ public class UnitMovementCache : IDisposable
     {
         if (moveableTileCache.TryGetValue(unit, out List<Tile> cachedTiles))
         {
+            Debug.Log("Moveable Tiles Retrieved From Cache");
             return cachedTiles;
         }
 
+        Debug.Log("Moveable Tiles Calculated");
         List<Tile> calculatedTiles = _pathfindingService.CalculateMoveableTiles(unit);
-        moveableTileCache[unit] = calculatedTiles;
+        moveableTileCache.Add(unit, calculatedTiles);
+
         return calculatedTiles;
     }
 

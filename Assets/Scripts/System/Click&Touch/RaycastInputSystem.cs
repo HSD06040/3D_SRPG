@@ -34,17 +34,19 @@ public class RaycastInputSystem : MonoBehaviour
         {
             controller.Cast(currentScreenPosition);
         }
-    }
+    }    
 
     void Hit(RaycastHit hit)
     {
-        if (hit.collider.TryGetComponent<BaseUnit>(out BaseUnit unit))
+        if (hit.collider.TryGetComponent(out BaseUnit unit))
         {
             EventBus<UnitSelectEvent>.Raise(new UnitSelectEvent(unit));
+            Debug.Log("Unit Selected: " + unit.name);
         }
-        else if (hit.collider.TryGetComponent<Tile>(out Tile tile))
+        else if (hit.collider.TryGetComponent(out Tile tile))
         {
             EventBus<TileSelectEvent>.Raise(new TileSelectEvent(tile));
+            Debug.Log("Tile Selected: " + tile.Pos);
         }
     }
 

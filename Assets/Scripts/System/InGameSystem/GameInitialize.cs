@@ -3,21 +3,35 @@ using Zenject;
 
 public class GameInitialize : MonoBehaviour
 {
+    public GameObject[] instantiateSystems;
     public MapData mapData;
 
     [Header("Unit Test")]
-    GameObject unitPrefab;
-    Vector2Int unitPos;
+    public GameObject unitPrefab;
+    public UnitData unitData;
+    public Vector2Int unitPos;
 
 
     [Inject]
     private void Init(MapSystem mapSystem)
     {
+        SystemInstantiates();
+
         MapGenerator.MapGenerate(mapData, mapSystem, Resources.Load<GameObject>("Prefabs/Tile"));
 
-        GameObject unit = Instantiate(unitPrefab);
+        BaseUnit unit = Instantiate(unitPrefab).GetComponent<BaseUnit>();
+        unit.SetPosition(unitPos);
+        unit.Init(unitData);
 
-        if(mapSystem.TryGetTile(unitPos, out Tile tile))
+        if (mapSystem.TryGetTile(unitPos, out Tile tile))
             unit.transform.position = tile.transform.position;
+    }
+
+    private void SystemInstantiates()
+    {
+        foreach (var obj in instantiateSystems)
+        {
+            Instantiate(obj);
+        }
     }
 }

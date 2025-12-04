@@ -8,4 +8,12 @@ public class UnitData
 
     public StatData StatData;
     public AbilityData AbilityData;
+
+    public UnitData()
+    {
+        Level = 1;
+        isFly = false;
+        StatData = new StatData();
+        AbilityData = new AbilityData();
+    }
 }

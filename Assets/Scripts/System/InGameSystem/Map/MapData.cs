@@ -8,7 +8,7 @@ public struct MapData
     public float MapScale;
     public Vector2Int MapSize;
     public Vector2Int MapStartPoint;
-    public Vector2 MapOffset;
+    public float Offset;
     public Vector2 TileScale;
 
     public int MapTotalSize => MapSize.x * MapSize.y;
